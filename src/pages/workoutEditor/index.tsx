@@ -5,6 +5,7 @@ import {
   WeekDayCheckBoxList,
   WEEK_DAYS,
 } from "../../components/WeekDayCheckboxList";
+import { WorkoutDayEditor } from "../../components/WorkoutDayEditor";
 
 export const WorkoutEditorPage = () => {
   const [checkedDays, setCheckedDays] = useState<WEEK_DAYS[]>([]);
@@ -28,6 +29,7 @@ export const WorkoutEditorPage = () => {
           </Nav.Item>
         ))}
       </Nav>
+      <WorkoutDayEditor />
     </div>
   );
 };
