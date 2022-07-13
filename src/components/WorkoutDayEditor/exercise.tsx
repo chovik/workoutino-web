@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import {
   Badge,
   Card,
@@ -18,6 +18,7 @@ import { WithContext as ReactTags } from "react-tag-input";
 import React from "react";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import { type } from "@testing-library/user-event/dist/type";
+import { WorkoutDayExerciseSet } from "./set";
 
 export interface IWorkoutDayExerciseProps {
   orderNumber: string;
@@ -26,6 +27,7 @@ export interface IWorkoutDayExerciseProps {
 export const WorkoutDayExercise = ({
   orderNumber,
 }: IWorkoutDayExerciseProps) => {
+  const [sets, setSets] = useState<>();
   const suggestions = ["snatch", "clean"].map((country) => {
     return {
       id: country,
@@ -95,65 +97,10 @@ export const WorkoutDayExercise = ({
           <Row>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((setNumber) => (
               <Col sm={4} md={3} lg={3} xl={2} xxl={1}>
-                <Card>
-                  <Card.Header>
-                    {/* <Badge bg="secondary">{setNumber}</Badge> */}
-                    <Form.Label>Reps</Form.Label>
-                    <InputGroup className="mb-3">
-                      <Form.Control
-                        aria-label="Text input with dropdown button"
-                        placeholder="min"
-                        size="sm"
-                      />
-                      <span style={{ margin: 5 }}> - </span>
-                      <Form.Control
-                        aria-label="Text input with dropdown button"
-                        placeholder="max"
-                        size="sm"
-                      />
-
-                      <DropdownButton
-                        size="sm"
-                        variant="outline-secondary"
-                        title="Reps"
-                        id="input-group-dropdown-1"
-                      >
-                        <Dropdown.Item href="#">Reps</Dropdown.Item>
-                        <Dropdown.Item href="#">RIR</Dropdown.Item>
-                        <Dropdown.Item href="#">Range</Dropdown.Item>
-                        <Dropdown.Divider />
-                        <Dropdown.Item href="#">Separated link</Dropdown.Item>
-                      </DropdownButton>
-                    </InputGroup>
-                  </Card.Header>
-                  <Card.Body>
-                    <InputGroup className="mb-3">
-                      <Form.Control
-                        aria-label="Text input with dropdown button"
-                        placeholder="min"
-                        size="sm"
-                      />
-                      <span style={{ margin: 5 }}> - </span>
-                      <Form.Control
-                        aria-label="Text input with dropdown button"
-                        placeholder="max"
-                        size="sm"
-                      />
-                      <DropdownButton
-                        size="sm"
-                        variant="outline-secondary"
-                        title="Reps"
-                        id="input-group-dropdown-1"
-                      >
-                        <Dropdown.Item href="#">Reps</Dropdown.Item>
-                        <Dropdown.Item href="#">RIR</Dropdown.Item>
-                        <Dropdown.Item href="#">Range</Dropdown.Item>
-                        <Dropdown.Divider />
-                        <Dropdown.Item href="#">Separated link</Dropdown.Item>
-                      </DropdownButton>
-                    </InputGroup>
-                  </Card.Body>
-                </Card>
+                <WorkoutDayExerciseSet
+                  setNumber={setNumber}
+                  key={`set-${setNumber}`}
+                />
               </Col>
             ))}
           </Row>

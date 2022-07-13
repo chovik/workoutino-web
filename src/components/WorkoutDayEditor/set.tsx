@@ -31,6 +31,23 @@ export enum RepetitionsType {
   RIR = "RIR",
 }
 
+export interface ISelectValue<TValue> {
+  value: TValue;
+  label: string;
+}
+
+const repetitionSelectItems: ISelectValue<RepetitionsType>[] = [
+  { value: RepetitionsType.Fixed, label: "Fixed" },
+  { value: RepetitionsType.RIR, label: "RIR" },
+  { value: RepetitionsType.Range, label: "Range" },
+];
+
+const weightSelectItems: ISelectValue<WeightType>[] = [
+  { value: WeightType.Fixed, label: "Fixed" },
+  { value: WeightType.RIR, label: "RIR" },
+  { value: WeightType.Range, label: "Range" },
+];
+
 export interface IWorkoutDayExerciseSetProps {
   setNumber: number;
   setWeightType: (type: WeightType) => void;
@@ -110,13 +127,14 @@ export const WorkoutDayExerciseSet = ({
               title="Reps"
               id="input-group-dropdown-1"
             >
-              <Dropdown.Item href="#" onChange={() => setRepe}>
-                Reps
-              </Dropdown.Item>
-              <Dropdown.Item href="#">RIR</Dropdown.Item>
-              <Dropdown.Item href="#">Range</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item href="#">Separated link</Dropdown.Item>
+              {repetitionSelectItems.map((selectItem) => (
+                <Dropdown.Item
+                  href="#"
+                  onChange={() => setRepetitionsType(selectItem.value)}
+                >
+                  {selectItem.label}
+                </Dropdown.Item>
+              ))}
             </DropdownButton>
           </InputGroup>
         </Card.Header>
@@ -139,11 +157,14 @@ export const WorkoutDayExerciseSet = ({
               title="Reps"
               id="input-group-dropdown-1"
             >
-              <Dropdown.Item href="#">Reps</Dropdown.Item>
-              <Dropdown.Item href="#">RIR</Dropdown.Item>
-              <Dropdown.Item href="#">Range</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item href="#">Separated link</Dropdown.Item>
+              {weightSelectItems.map((selectItem) => (
+                <Dropdown.Item
+                  href="#"
+                  onChange={() => setWeightType(selectItem.value)}
+                >
+                  {selectItem.label}
+                </Dropdown.Item>
+              ))}
             </DropdownButton>
           </InputGroup>
         </Card.Body>
