@@ -18,6 +18,7 @@ import { WithContext as ReactTags } from "react-tag-input";
 import React from "react";
 import CardHeader from "react-bootstrap/esm/CardHeader";
 import { type } from "@testing-library/user-event/dist/type";
+import { IWorkoutExerciseSet, IWorkoutExerciseSetWeight } from "./exercise";
 
 export enum WeightType {
   Fixed = "FIXED",
@@ -49,15 +50,18 @@ const weightSelectItems: ISelectValue<WeightType>[] = [
 ];
 
 export interface IWorkoutDayExerciseSetProps {
+  exerciseSet: IWorkoutExerciseSet;
   setNumber: number;
-  setWeightType: (type: WeightType) => void;
-  setRepetitionsType: (type: RepetitionsType) => void;
+  updateExerciseSet: (
+    uid: string,
+    updatedSet: Partial<IWorkoutExerciseSet>
+  ) => void;
 }
 
 export const WorkoutDayExerciseSet = ({
+  exerciseSet,
   setNumber,
-  setRepetitionsType,
-  setWeightType,
+  updateExerciseSet,
 }: IWorkoutDayExerciseSetProps) => {
   const suggestions = ["snatch", "clean"].map((country) => {
     return {
@@ -102,73 +106,144 @@ export const WorkoutDayExerciseSet = ({
     console.log("The tag at index " + index + " was clicked");
   };
 
+  console.log(exerciseSet.repetitions.type);
   return (
-    <Col sm={4} md={3} lg={3} xl={2} xxl={1}>
-      <Card>
-        <Card.Header>
-          {/* <Badge bg="secondary">{setNumber}</Badge> */}
+    <Card>
+      <Card.Header>
+        {/* <Badge bg="secondary">{setNumber}</Badge> */}
+        <div style={{ display: "flex" }}>
           <Form.Label>Reps</Form.Label>
-          <InputGroup className="mb-3">
+          <DropdownButton
+            size="sm"
+            variant="outline-secondary"
+            title={exerciseSet.repetitions.type}
+            id="input-group-dropdown-1"
+          >
+            {repetitionSelectItems.map((selectItem) => (
+              <Dropdown.Item
+                href="#"
+                onClick={() => {
+                  console.log(selectItem.value);
+                  updateExerciseSet(exerciseSet.uid, {
+                    repetitions: {
+                      ...exerciseSet.repetitions,
+                      type: selectItem.value,
+                    },
+                  });
+                }}
+              >
+                {selectItem.label}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
+        </div>
+        <InputGroup className="mb-3">
+          {exerciseSet.repetitions.type === RepetitionsType.Fixed && (
             <Form.Control
               aria-label="Text input with dropdown button"
-              placeholder="min"
+              placeholder="weight"
               size="sm"
+              defaultValue={exerciseSet.repetitions.valueFrom}
+              onChange={(e) =>
+                updateExerciseSet(exerciseSet.uid, {
+                  repetitions: {
+                    ...exerciseSet.repetitions,
+                    value: +e.target.value,
+                  },
+                })
+              }
             />
-            <span style={{ margin: 5 }}> - </span>
-            <Form.Control
-              aria-label="Text input with dropdown button"
-              placeholder="max"
-              size="sm"
-            />
+          )}
 
-            <DropdownButton
-              size="sm"
-              variant="outline-secondary"
-              title="Reps"
-              id="input-group-dropdown-1"
-            >
-              {repetitionSelectItems.map((selectItem) => (
-                <Dropdown.Item
-                  href="#"
-                  onChange={() => setRepetitionsType(selectItem.value)}
-                >
-                  {selectItem.label}
-                </Dropdown.Item>
-              ))}
-            </DropdownButton>
-          </InputGroup>
-        </Card.Header>
-        <Card.Body>
-          <InputGroup className="mb-3">
+          {exerciseSet.repetitions.type === RepetitionsType.Range && (
+            <>
+              <Form.Control
+                aria-label="Text input with dropdown button"
+                placeholder="min"
+                size="sm"
+                defaultValue={exerciseSet.repetitions.valueFrom}
+                onChange={(e) =>
+                  updateExerciseSet(exerciseSet.uid, {
+                    repetitions: {
+                      ...exerciseSet.repetitions,
+                      valueFrom: +e.target.value,
+                    },
+                  })
+                }
+              />
+              <span style={{ margin: 5 }}> - </span>
+              <Form.Control
+                aria-label="Text input with dropdown button"
+                placeholder="max"
+                size="sm"
+                defaultValue={exerciseSet.repetitions.valueTo}
+                onChange={(e) =>
+                  updateExerciseSet(exerciseSet.uid, {
+                    repetitions: {
+                      ...exerciseSet.repetitions,
+                      valueTo: +e.target.value,
+                    },
+                  })
+                }
+              />
+            </>
+          )}
+
+          {exerciseSet.repetitions.type === RepetitionsType.RIR && (
             <Form.Control
               aria-label="Text input with dropdown button"
-              placeholder="min"
+              placeholder="weight"
               size="sm"
+              defaultValue={exerciseSet.repetitions.valueFrom}
+              onChange={(e) =>
+                updateExerciseSet(exerciseSet.uid, {
+                  repetitions: {
+                    ...exerciseSet.repetitions,
+                    value: +e.target.value,
+                  },
+                })
+              }
             />
-            <span style={{ margin: 5 }}> - </span>
-            <Form.Control
-              aria-label="Text input with dropdown button"
-              placeholder="max"
-              size="sm"
-            />
-            <DropdownButton
-              size="sm"
-              variant="outline-secondary"
-              title="Reps"
-              id="input-group-dropdown-1"
-            >
-              {weightSelectItems.map((selectItem) => (
-                <Dropdown.Item
-                  href="#"
-                  onChange={() => setWeightType(selectItem.value)}
-                >
-                  {selectItem.label}
-                </Dropdown.Item>
-              ))}
-            </DropdownButton>
-          </InputGroup>
-        </Card.Body>
-      </Card>
-    </Col>
+          )}
+        </InputGroup>
+      </Card.Header>
+      <Card.Body>
+        <div style={{ display: "flex" }}>
+          <Form.Label>Weight</Form.Label>
+          <DropdownButton
+            size="sm"
+            variant="outline-secondary"
+            title={exerciseSet.weight.type}
+            id="input-group-dropdown-1"
+          >
+            {weightSelectItems.map((selectItem) => (
+              <Dropdown.Item
+                href="#"
+                onClick={() =>
+                  updateExerciseSet(exerciseSet.uid, {
+                    weight: { ...exerciseSet.weight, type: selectItem.value },
+                  })
+                }
+              >
+                {selectItem.label}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
+        </div>
+        <InputGroup className="mb-3">
+          <Form.Control
+            aria-label="Text input with dropdown button"
+            placeholder="min"
+            size="sm"
+          />
+          <span style={{ margin: 5 }}> - </span>
+          <Form.Control
+            aria-label="Text input with dropdown button"
+            placeholder="max"
+            size="sm"
+          />
+        </InputGroup>
+      </Card.Body>
+    </Card>
   );
 };
