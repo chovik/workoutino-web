@@ -75,11 +75,24 @@ export interface IWorkoutExerciseSet {
   repetitions: IWorkoutExerciseSetRepetitions;
 }
 
+const options = [
+  { value: "chocolate", label: "Chocolate" },
+  { value: "strawberry", label: "Strawberry" },
+  { value: "vanilla", label: "Vanilla" },
+];
+
+export interface ISelectOption {
+  value: string;
+  label: string;
+}
+
 export const WorkoutDayExercise = ({
   orderNumber,
 }: IWorkoutDayExerciseProps) => {
   const [sets, setSets] = useState<IWorkoutExerciseSet[]>([]);
-
+  const [selectedOption, setSelectedOption] = useState<ISelectOption[]>([
+    options[1],
+  ]);
   const updateExerciseSet = (
     uid: string,
     updatedSet: Partial<IWorkoutExerciseSet>
@@ -197,12 +210,10 @@ export const WorkoutDayExercise = ({
         <Space wrap>
           <b>{orderNumber}</b>
           <Select
-            defaultValue={[tags[2], tags[3]]}
-            isMulti={true}
-            name="colors"
-            options={tags}
-            className="basic-multi-select"
-            classNamePrefix="select"
+            defaultValue={selectedOption}
+            options={options}
+            isMulti
+            onChange={(c) => setSelectedOption([...selectedOption, ...c])}
           />
         </Space>
       }
