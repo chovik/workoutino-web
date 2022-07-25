@@ -1,5 +1,5 @@
+import { TabPane, Tabs } from "@douyinfe/semi-ui";
 import { useState } from "react";
-import { Form, FormGroup, Nav, NavItem, Table } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import {
   WeekDayCheckBoxList,
@@ -22,14 +22,17 @@ export const WorkoutEditorPage = () => {
         checkedDays={checkedDays}
         setCheckedDays={setCheckedDays}
       />
-      <Nav variant="pills">
-        {checkedDays.map((day) => (
-          <Nav.Item>
-            <Nav.Link eventKey={day}>{day}</Nav.Link>
-          </Nav.Item>
-        ))}
-      </Nav>
-      <WorkoutDayEditor />
+      <Tabs type="button">
+        <TabPane tab="Document" itemKey="1">
+          <WorkoutDayEditor />
+        </TabPane>
+        <TabPane tab="Quick Start" itemKey="2">
+          Quick Start
+        </TabPane>
+        <TabPane tab="Help" itemKey="3">
+          Help
+        </TabPane>
+      </Tabs>
     </div>
   );
 };

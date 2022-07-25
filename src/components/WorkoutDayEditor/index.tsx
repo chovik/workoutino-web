@@ -1,24 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import {
-  Badge,
-  Card,
-  Col,
-  Container,
-  Dropdown,
-  DropdownButton,
-  FloatingLabel,
-  Form,
-  FormGroup,
-  InputGroup,
-  Row,
-  Stack,
-  Table,
-} from "react-bootstrap";
 import { WEEK_DAYS } from "../WeekDayCheckboxList";
-import { WithContext as ReactTags } from "react-tag-input";
 import React from "react";
-import CardHeader from "react-bootstrap/esm/CardHeader";
-import { type } from "@testing-library/user-event/dist/type";
 import { WorkoutDayExercise } from "./exercise";
 
 export interface IWorkoutExercise {

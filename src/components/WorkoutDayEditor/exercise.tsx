@@ -1,25 +1,20 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+import React from "react";
+import { RepetitionsType, WorkoutDayExerciseSet } from "./set";
 import {
+  AutoComplete,
   Badge,
   Button,
   Card,
-  Col,
-  Container,
-  Dropdown,
-  DropdownButton,
-  FloatingLabel,
-  Form,
-  FormGroup,
-  InputGroup,
-  Row,
-  Stack,
-  Table,
-} from "react-bootstrap";
-import { WithContext as ReactTags } from "react-tag-input";
-import React from "react";
-import CardHeader from "react-bootstrap/esm/CardHeader";
-import { type } from "@testing-library/user-event/dist/type";
-import { RepetitionsType, WorkoutDayExerciseSet } from "./set";
+  CardGroup,
+  Space,
+  Tag,
+  TagGroup,
+  TagInput,
+} from "@douyinfe/semi-ui";
+import { TagGroupProps, TagProps } from "@douyinfe/semi-ui/lib/es/tag";
+import { IconSearch } from "@douyinfe/semi-icons";
+import Select from "react-select";
 
 class Guid {
   static newGuid() {
@@ -119,13 +114,6 @@ export const WorkoutDayExercise = ({
 
   const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
-  const [tags, setTags] = React.useState([
-    { id: "Thailand", text: "Thailand" },
-    { id: "India", text: "India" },
-    { id: "Vietnam", text: "Vietnam" },
-    { id: "Turkey", text: "Turkey" },
-  ]);
-
   const handleDelete = (i: any) => {
     setTags(tags.filter((tag, index) => index !== i));
   };
@@ -172,49 +160,74 @@ export const WorkoutDayExercise = ({
     setSets([...sets, newExerciseSet]);
   };
 
+  const tagList = [
+    { color: "white", children: "Abc", closable: true },
+    { color: "white", children: "Hotsoon" },
+    { color: "white", children: "Toutiao" },
+    { color: "white", children: "Vigo" },
+    { color: "white", children: "Pipixia" },
+  ] as TagProps[];
+
+  const [tags, setTags] = useState<TagProps[]>(tagList);
+
+  const [stringData, setStringData] = useState<string[]>([]);
+  const [value, setValue] = useState<string | number>("");
+  const handleStringSearch = (value: string) => {
+    let result: string[];
+    if (value) {
+      result = ["gmail.com", "163.com", "qq.com"].map(
+        (domain) => `${value}@${domain}`
+      );
+    } else {
+      result = [];
+    }
+    setStringData(result);
+  };
+
+  const handleChange = (value: string | number) => {
+    console.log("onChange", value);
+    setTags([...tags, { color: "red", children: value }]);
+    setValue(value);
+  };
+
   return (
-    <Card>
-      <Card.Header>
-        <Stack direction="horizontal" gap={3}>
-          <Form.Label>
-            <b>{orderNumber}</b>
-          </Form.Label>
-          {/* <ReactTags
-            key={orderNumber}
-            tags={tags}
-            suggestions={suggestions}
-            delimiters={delimiters}
-            handleDelete={handleDelete}
-            handleAddition={handleAddition}
-            handleDrag={handleDrag}
-            handleTagClick={handleTagClick}
-            inputFieldPosition="inline"
-            autocomplete={true}
-            allowUnique={false}
-          /> */}
-        </Stack>
-      </Card.Header>
-      <Card.Body>
-        <Container fluid={true}>
-          <Row>
-            {sets.map((set, setNumber) => (
-              <Col sm={4} md={3} lg={3} xl={2} xxl={1}>
-                <WorkoutDayExerciseSet
-                  exerciseSet={set}
-                  setNumber={setNumber}
-                  key={`set-${setNumber}`}
-                  updateExerciseSet={updateExerciseSet}
-                />
-              </Col>
-            ))}
-            <Col sm={4} md={3} lg={3} xl={2} xxl={1}>
-              <Button variant="success" onClick={addNewExerciseSet}>
-                Add set
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </Card.Body>
+    <Card
+      style={{ marginBottom: 20 }}
+      title={
+        <Space wrap>
+          <b>{orderNumber}</b>
+          <Select
+            defaultValue={[tags[2], tags[3]]}
+            isMulti={true}
+            name="colors"
+            options={tags}
+            className="basic-multi-select"
+            classNamePrefix="select"
+          />
+        </Space>
+      }
+      headerStyle={{ backgroundColor: "rgba(var(--semi-grey-2), 1)" }}
+    >
+      <CardGroup>
+        {sets.map((set, setNumber) => (
+          <Badge count={setNumber} position="leftTop">
+            <Card>
+              <WorkoutDayExerciseSet
+                exerciseSet={set}
+                setNumber={setNumber}
+                key={`set-${setNumber}`}
+                updateExerciseSet={updateExerciseSet}
+              />
+            </Card>
+          </Badge>
+        ))}
+        <Button onClick={addNewExerciseSet}>Add set</Button>
+        {/* <Col sm={4} md={3} lg={3} xl={2} xxl={1}>
+          <Button variant="success" onClick={addNewExerciseSet}>
+            Add set
+          </Button>
+        </Col> */}
+      </CardGroup>
     </Card>
   );
 };

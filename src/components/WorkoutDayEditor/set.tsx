@@ -1,24 +1,14 @@
-import { Dispatch, SetStateAction } from "react";
+import React from "react";
+import { IWorkoutExerciseSet } from "./exercise";
 import {
   Badge,
-  Card,
-  Col,
-  Container,
-  Dropdown,
-  DropdownButton,
-  FloatingLabel,
-  Form,
-  FormGroup,
-  InputGroup,
-  Row,
-  Stack,
-  Table,
-} from "react-bootstrap";
-import { WithContext as ReactTags } from "react-tag-input";
-import React from "react";
-import CardHeader from "react-bootstrap/esm/CardHeader";
-import { type } from "@testing-library/user-event/dist/type";
-import { IWorkoutExerciseSet, IWorkoutExerciseSetWeight } from "./exercise";
+  Input,
+  InputNumber,
+  List,
+  Select,
+  Tag,
+  Typography,
+} from "@douyinfe/semi-ui";
 
 export enum WeightType {
   Fixed = "FIXED",
@@ -106,49 +96,46 @@ export const WorkoutDayExerciseSet = ({
     console.log("The tag at index " + index + " was clicked");
   };
 
+  const list = [
+    { value: "abc", label: "Semi" },
+    { value: "hotsoon", label: "Hotsoon" },
+    { value: "pipixia", label: "Pipixia" },
+    { value: "toutiao", label: "TooBuzz" },
+  ];
+
   console.log(exerciseSet.repetitions.type);
   return (
-    <Card>
-      <Card.Header>
-        {/* <Badge bg="secondary">{setNumber}</Badge> */}
-        <div style={{ display: "flex" }}>
-          <Form.Label>Reps</Form.Label>
-          <DropdownButton
-            size="sm"
-            variant="outline-secondary"
-            title={exerciseSet.repetitions.type}
-            id="input-group-dropdown-1"
-          >
-            {repetitionSelectItems.map((selectItem) => (
-              <Dropdown.Item
-                href="#"
-                onClick={() => {
-                  console.log(selectItem.value);
-                  updateExerciseSet(exerciseSet.uid, {
-                    repetitions: {
-                      ...exerciseSet.repetitions,
-                      type: selectItem.value,
-                    },
-                  });
-                }}
-              >
-                {selectItem.label}
-              </Dropdown.Item>
-            ))}
-          </DropdownButton>
-        </div>
-        <InputGroup className="mb-3">
+    <>
+      <div>
+        <Tag color="blue" size="large">
+          <b>Repetitions</b>
+        </Tag>
+        <Select
+          placeholder="Weight type"
+          optionList={repetitionSelectItems}
+          size="small"
+          style={{ marginLeft: "5px" }}
+          onChange={(value) =>
+            updateExerciseSet(exerciseSet.uid, {
+              repetitions: {
+                ...exerciseSet.repetitions,
+                type: value as RepetitionsType,
+              },
+            })
+          }
+        />
+        <div style={{ marginTop: "5px", marginBottom: "5px" }}>
           {exerciseSet.repetitions.type === RepetitionsType.Fixed && (
-            <Form.Control
-              aria-label="Text input with dropdown button"
-              placeholder="weight"
-              size="sm"
-              defaultValue={exerciseSet.repetitions.valueFrom}
-              onChange={(e) =>
+            <InputNumber
+              style={{ width: "50px" }}
+              innerButtons
+              size="small"
+              defaultValue={exerciseSet.repetitions.value}
+              onChange={(value) =>
                 updateExerciseSet(exerciseSet.uid, {
                   repetitions: {
                     ...exerciseSet.repetitions,
-                    value: +e.target.value,
+                    value: +value,
                   },
                 })
               }
@@ -157,31 +144,31 @@ export const WorkoutDayExerciseSet = ({
 
           {exerciseSet.repetitions.type === RepetitionsType.Range && (
             <>
-              <Form.Control
-                aria-label="Text input with dropdown button"
-                placeholder="min"
-                size="sm"
+              <InputNumber
+                style={{ width: "50px" }}
+                innerButtons
+                size="small"
                 defaultValue={exerciseSet.repetitions.valueFrom}
-                onChange={(e) =>
+                onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
                     repetitions: {
                       ...exerciseSet.repetitions,
-                      valueFrom: +e.target.value,
+                      valueFrom: +value,
                     },
                   })
                 }
               />
               <span style={{ margin: 5 }}> - </span>
-              <Form.Control
-                aria-label="Text input with dropdown button"
-                placeholder="max"
-                size="sm"
+              <InputNumber
+                innerButtons
+                style={{ width: "50px" }}
+                size="small"
                 defaultValue={exerciseSet.repetitions.valueTo}
-                onChange={(e) =>
+                onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
                     repetitions: {
                       ...exerciseSet.repetitions,
-                      valueTo: +e.target.value,
+                      valueTo: +value,
                     },
                   })
                 }
@@ -190,60 +177,111 @@ export const WorkoutDayExerciseSet = ({
           )}
 
           {exerciseSet.repetitions.type === RepetitionsType.RIR && (
-            <Form.Control
-              aria-label="Text input with dropdown button"
-              placeholder="weight"
-              size="sm"
-              defaultValue={exerciseSet.repetitions.valueFrom}
-              onChange={(e) =>
+            <InputNumber
+              style={{ width: "50px" }}
+              innerButtons
+              size="small"
+              defaultValue={exerciseSet.repetitions.value}
+              onChange={(value) =>
                 updateExerciseSet(exerciseSet.uid, {
                   repetitions: {
                     ...exerciseSet.repetitions,
-                    value: +e.target.value,
+                    value: +value,
                   },
                 })
               }
             />
           )}
-        </InputGroup>
-      </Card.Header>
-      <Card.Body>
-        <div style={{ display: "flex" }}>
-          <Form.Label>Weight</Form.Label>
-          <DropdownButton
-            size="sm"
-            variant="outline-secondary"
-            title={exerciseSet.weight.type}
-            id="input-group-dropdown-1"
-          >
-            {weightSelectItems.map((selectItem) => (
-              <Dropdown.Item
-                href="#"
-                onClick={() =>
+        </div>
+      </div>
+      <div>
+        <Tag color="blue" size="large">
+          <b>Weight</b>
+        </Tag>
+        <Select
+          placeholder="Weight type"
+          optionList={repetitionSelectItems}
+          size="small"
+          style={{ marginLeft: "5px" }}
+          onChange={(value) =>
+            updateExerciseSet(exerciseSet.uid, {
+              weight: {
+                ...exerciseSet.weight,
+                type: value as WeightType,
+              },
+            })
+          }
+        />
+        <div style={{ marginTop: "5px" }}>
+          {exerciseSet.weight.type === WeightType.Fixed && (
+            <InputNumber
+              style={{ width: "50px" }}
+              innerButtons
+              size="small"
+              defaultValue={exerciseSet.weight.value}
+              onChange={(value) =>
+                updateExerciseSet(exerciseSet.uid, {
+                  weight: {
+                    ...exerciseSet.weight,
+                    value: +value,
+                  },
+                })
+              }
+            />
+          )}
+
+          {exerciseSet.weight.type === WeightType.Range && (
+            <>
+              <InputNumber
+                style={{ width: "50px" }}
+                innerButtons
+                size="small"
+                defaultValue={exerciseSet.weight.valueFrom}
+                onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
-                    weight: { ...exerciseSet.weight, type: selectItem.value },
+                    weight: {
+                      ...exerciseSet.weight,
+                      valueFrom: +value,
+                    },
                   })
                 }
-              >
-                {selectItem.label}
-              </Dropdown.Item>
-            ))}
-          </DropdownButton>
+              />
+              <span style={{ margin: 5 }}> - </span>
+              <InputNumber
+                style={{ width: "50px" }}
+                innerButtons
+                size="small"
+                defaultValue={exerciseSet.weight.valueTo}
+                onChange={(value) =>
+                  updateExerciseSet(exerciseSet.uid, {
+                    weight: {
+                      ...exerciseSet.weight,
+                      valueTo: +value,
+                    },
+                  })
+                }
+              />
+            </>
+          )}
+
+          {exerciseSet.weight.type === WeightType.RIR && (
+            <InputNumber
+              style={{ width: "50px" }}
+              innerButtons
+              size="small"
+              defaultValue={exerciseSet.weight.value}
+              onChange={(value) =>
+                updateExerciseSet(exerciseSet.uid, {
+                  weight: {
+                    ...exerciseSet.weight,
+                    value: +value,
+                  },
+                })
+              }
+            />
+          )}
         </div>
-        <InputGroup className="mb-3">
-          <Form.Control
-            aria-label="Text input with dropdown button"
-            placeholder="min"
-            size="sm"
-          />
-          <span style={{ margin: 5 }}> - </span>
-          <Form.Control
-            aria-label="Text input with dropdown button"
-            placeholder="max"
-            size="sm"
-          />
-        </InputGroup>
-      </Card.Body>
-    </Card>
+      </div>
+    </>
   );
 };

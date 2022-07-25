@@ -1,5 +1,5 @@
+import { Checkbox, CheckboxGroup } from "@douyinfe/semi-ui";
 import { Dispatch, SetStateAction, useState } from "react";
-import { FormGroup, Form } from "react-bootstrap";
 
 export enum WEEK_DAYS {
   Sunday = "Sunday",
@@ -31,16 +31,17 @@ export const WeekDayCheckBoxList = ({
   console.log(Object.values(WEEK_DAYS));
 
   return (
-    <FormGroup>
+    <div>
       {Object.values(WEEK_DAYS).map((day) => (
-        <Form.Check
-          inline={true}
-          type={"checkbox"}
+        <Checkbox
           id={`weekday-${day}`}
-          label={`${day}`}
-          onChange={(e) => checkDay(day as WEEK_DAYS, e.target.checked)}
-        />
+          onChange={(e) =>
+            checkDay(day as WEEK_DAYS, e.target.checked ?? false)
+          }
+        >
+          ${day}
+        </Checkbox>
       ))}
-    </FormGroup>
+    </div>
   );
 };
