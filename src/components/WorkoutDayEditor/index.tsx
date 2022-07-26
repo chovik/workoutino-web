@@ -1,9 +1,12 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { WEEK_DAYS } from "../WeekDayCheckboxList";
 import React from "react";
-import { WorkoutDayExercise } from "./exercise";
+import { Guid, WorkoutDayExercise } from "./exercise";
+import { Button } from "@douyinfe/semi-ui";
+import { IconClose, IconPlus, IconSearch } from "@douyinfe/semi-icons";
 
 export interface IWorkoutExercise {
+  uid: string;
   name: string;
   exercises: IExercise[];
   sets: IWorkoutExerciseSet[];
@@ -36,6 +39,7 @@ export interface IWeekkDayCheckBoxListProps {
 }
 
 export const WorkoutDayEditor = () => {
+  const [exercises, setExercises] = useState<IWorkoutExercise[]>([]);
   const suggestions = ["snatch", "clean"].map((country) => {
     return {
       id: country,
@@ -79,11 +83,50 @@ export const WorkoutDayEditor = () => {
     console.log("The tag at index " + index + " was clicked");
   };
 
+  const updateExercise = (
+    uid: string,
+    updatedExercise: Partial<IWorkoutExercise>
+  ) => {
+    const newExercises = exercises.map((e) => {
+      if (e.uid === uid) {
+        console.log(uid);
+        console.log(updatedExercise);
+        return {
+          ...e,
+          ...updatedExercise,
+        };
+      }
+
+      return e;
+    });
+
+    setExercises([...newExercises]);
+  };
+
   return (
     <>
-      {["A", "B", "C", "D"].map((exerciseNumber) => (
-        <WorkoutDayExercise orderNumber={exerciseNumber} />
+      {exercises.map((exercise, i) => (
+        <WorkoutDayExercise
+          orderNumber={exercise.name}
+          key={exercise.name + i}
+          deleteExercise={(uid) =>
+            setExercises([...exercises.filter((e) => e.uid !== uid)])
+          }
+          updateExercise={updateExercise}
+          exercise={exercise}
+        />
       ))}
+      <Button
+        icon={<IconPlus />}
+        aria-label="Screenshot"
+        style={{ position: "absolute", top: "0", right: "0" }}
+        onClick={() => {
+          setExercises([
+            ...exercises,
+            { uid: Guid.newGuid(), name: "", exercises: [], sets: [] },
+          ]);
+        }}
+      />
     </>
   );
 };

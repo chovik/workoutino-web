@@ -34,6 +34,7 @@ export const WeekDayCheckBoxList = ({
     <div>
       {Object.values(WEEK_DAYS).map((day) => (
         <Checkbox
+          key={`weekday-${day}`}
           id={`weekday-${day}`}
           onChange={(e) =>
             checkDay(day as WEEK_DAYS, e.target.checked ?? false)

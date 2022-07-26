@@ -13,10 +13,11 @@ import {
   TagInput,
 } from "@douyinfe/semi-ui";
 import { TagGroupProps, TagProps } from "@douyinfe/semi-ui/lib/es/tag";
-import { IconSearch } from "@douyinfe/semi-icons";
-import Select from "react-select";
+import { IconClose, IconSearch } from "@douyinfe/semi-icons";
+import Select, { ActionMeta, OnChangeValue } from "react-select";
+import { IWorkoutExercise } from ".";
 
-class Guid {
+export class Guid {
   static newGuid() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
       /[xy]/g,
@@ -36,6 +37,9 @@ export enum WeightType {
 
 export interface IWorkoutDayExerciseProps {
   orderNumber: string;
+  exercise: IWorkoutExercise;
+  updateExercise: (uid: string, updatedSet: Partial<IWorkoutExercise>) => void;
+  deleteExercise: (uid: string) => void;
 }
 
 export interface IWorkoutExerciseSetRangeWeight {
@@ -75,12 +79,6 @@ export interface IWorkoutExerciseSet {
   repetitions: IWorkoutExerciseSetRepetitions;
 }
 
-const options = [
-  { value: "chocolate", label: "Chocolate" },
-  { value: "strawberry", label: "Strawberry" },
-  { value: "vanilla", label: "Vanilla" },
-];
-
 export interface ISelectOption {
   value: string;
   label: string;
@@ -88,7 +86,15 @@ export interface ISelectOption {
 
 export const WorkoutDayExercise = ({
   orderNumber,
+  exercise,
+  updateExercise,
+  deleteExercise,
 }: IWorkoutDayExerciseProps) => {
+  const options = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
   const [sets, setSets] = useState<IWorkoutExerciseSet[]>([]);
   const [selectedOption, setSelectedOption] = useState<ISelectOption[]>([
     options[1],
@@ -109,44 +115,9 @@ export const WorkoutDayExercise = ({
 
       return set;
     });
+    console.log("newSets", newSets);
 
     setSets([...newSets]);
-  };
-
-  const suggestions = ["snatch", "clean"].map((country) => {
-    return {
-      id: country,
-      text: country,
-    };
-  });
-
-  const KeyCodes = {
-    comma: 188,
-    enter: 13,
-  };
-
-  const delimiters = [KeyCodes.comma, KeyCodes.enter];
-
-  const handleDelete = (i: any) => {
-    setTags(tags.filter((tag, index) => index !== i));
-  };
-
-  const handleAddition = (tag: any) => {
-    setTags([...tags, tag]);
-  };
-
-  const handleDrag = (tag: any, currPos: any, newPos: any) => {
-    const newTags = tags.slice();
-
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
-
-    // re-render
-    setTags(newTags);
-  };
-
-  const handleTagClick = (index: any) => {
-    console.log("The tag at index " + index + " was clicked");
   };
 
   const addNewExerciseSet = () => {
@@ -183,25 +154,14 @@ export const WorkoutDayExercise = ({
 
   const [tags, setTags] = useState<TagProps[]>(tagList);
 
-  const [stringData, setStringData] = useState<string[]>([]);
-  const [value, setValue] = useState<string | number>("");
-  const handleStringSearch = (value: string) => {
-    let result: string[];
-    if (value) {
-      result = ["gmail.com", "163.com", "qq.com"].map(
-        (domain) => `${value}@${domain}`
-      );
-    } else {
-      result = [];
-    }
-    setStringData(result);
+  const handleSelectChange = (
+    newValue: OnChangeValue<ISelectOption, true>,
+    actionMeta: ActionMeta<ISelectOption>
+  ) => {
+    console.log(newValue);
+    setSelectedOption([...selectedOption, ...newValue]);
   };
-
-  const handleChange = (value: string | number) => {
-    console.log("onChange", value);
-    setTags([...tags, { color: "red", children: value }]);
-    setValue(value);
-  };
+  console.log(sets);
 
   return (
     <Card
@@ -210,18 +170,37 @@ export const WorkoutDayExercise = ({
         <Space wrap>
           <b>{orderNumber}</b>
           <Select
-            defaultValue={selectedOption}
             options={options}
             isMulti
-            onChange={(c) => setSelectedOption([...selectedOption, ...c])}
+            onChange={handleSelectChange}
+            menuPosition="fixed"
           />
         </Space>
       }
       headerStyle={{ backgroundColor: "rgba(var(--semi-grey-2), 1)" }}
+      headerExtraContent={
+        <Button
+          icon={<IconClose />}
+          aria-label="Screenshot"
+          onClick={() => {
+            deleteExercise(exercise.uid);
+          }}
+        />
+      }
     >
       <CardGroup>
         {sets.map((set, setNumber) => (
           <Badge count={setNumber} position="leftTop">
+            <Button
+              icon={<IconClose />}
+              aria-label="Screenshot"
+              style={{ position: "absolute", top: "0", right: "0" }}
+              onClick={() => {
+                console.log(set);
+                console.log([...sets.filter((s) => s.uid !== set.uid)]);
+                setSets([...sets.filter((s) => s.uid !== set.uid)]);
+              }}
+            />
             <Card>
               <WorkoutDayExerciseSet
                 exerciseSet={set}

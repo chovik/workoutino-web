@@ -2,13 +2,16 @@ import React from "react";
 import { IWorkoutExerciseSet } from "./exercise";
 import {
   Badge,
+  Button,
   Input,
   InputNumber,
   List,
   Select,
+  Space,
   Tag,
   Typography,
 } from "@douyinfe/semi-ui";
+import { IconCamera } from "@douyinfe/semi-icons";
 
 export enum WeightType {
   Fixed = "FIXED",
@@ -53,84 +56,42 @@ export const WorkoutDayExerciseSet = ({
   setNumber,
   updateExerciseSet,
 }: IWorkoutDayExerciseSetProps) => {
-  const suggestions = ["snatch", "clean"].map((country) => {
-    return {
-      id: country,
-      text: country,
-    };
-  });
-
   const KeyCodes = {
     comma: 188,
     enter: 13,
   };
-
-  const delimiters = [KeyCodes.comma, KeyCodes.enter];
-
-  const [tags, setTags] = React.useState([
-    { id: "Thailand", text: "Thailand" },
-    { id: "India", text: "India" },
-    { id: "Vietnam", text: "Vietnam" },
-    { id: "Turkey", text: "Turkey" },
-  ]);
-
-  const handleDelete = (i: any) => {
-    setTags(tags.filter((tag, index) => index !== i));
-  };
-
-  const handleAddition = (tag: any) => {
-    setTags([...tags, tag]);
-  };
-
-  const handleDrag = (tag: any, currPos: any, newPos: any) => {
-    const newTags = tags.slice();
-
-    newTags.splice(currPos, 1);
-    newTags.splice(newPos, 0, tag);
-
-    // re-render
-    setTags(newTags);
-  };
-
-  const handleTagClick = (index: any) => {
-    console.log("The tag at index " + index + " was clicked");
-  };
-
-  const list = [
-    { value: "abc", label: "Semi" },
-    { value: "hotsoon", label: "Hotsoon" },
-    { value: "pipixia", label: "Pipixia" },
-    { value: "toutiao", label: "TooBuzz" },
-  ];
-
   console.log(exerciseSet.repetitions.type);
   return (
     <>
       <div>
-        <Tag color="blue" size="large">
-          <b>Repetitions</b>
-        </Tag>
-        <Select
-          placeholder="Weight type"
-          optionList={repetitionSelectItems}
-          size="small"
-          style={{ marginLeft: "5px" }}
-          onChange={(value) =>
-            updateExerciseSet(exerciseSet.uid, {
-              repetitions: {
-                ...exerciseSet.repetitions,
-                type: value as RepetitionsType,
-              },
-            })
-          }
-        />
+        <Space spacing={"tight"}>
+          <div>
+            <Tag color="blue" size="large">
+              <b>Repetitions</b>
+            </Tag>
+          </div>
+          <Select
+            placeholder="Weight type"
+            optionList={repetitionSelectItems}
+            size="small"
+            style={{ marginLeft: "5px" }}
+            onChange={(value) =>
+              updateExerciseSet(exerciseSet.uid, {
+                repetitions: {
+                  ...exerciseSet.repetitions,
+                  type: value as RepetitionsType,
+                },
+              })
+            }
+          />
+        </Space>
         <div style={{ marginTop: "5px", marginBottom: "5px" }}>
           {exerciseSet.repetitions.type === RepetitionsType.Fixed && (
             <InputNumber
               style={{ width: "50px" }}
               innerButtons
               size="small"
-              defaultValue={exerciseSet.repetitions.value}
+              value={exerciseSet.repetitions.value}
               onChange={(value) =>
                 updateExerciseSet(exerciseSet.uid, {
                   repetitions: {
@@ -148,7 +109,7 @@ export const WorkoutDayExerciseSet = ({
                 style={{ width: "50px" }}
                 innerButtons
                 size="small"
-                defaultValue={exerciseSet.repetitions.valueFrom}
+                value={exerciseSet.repetitions.valueFrom}
                 onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
                     repetitions: {
@@ -163,7 +124,7 @@ export const WorkoutDayExerciseSet = ({
                 innerButtons
                 style={{ width: "50px" }}
                 size="small"
-                defaultValue={exerciseSet.repetitions.valueTo}
+                value={exerciseSet.repetitions.valueTo}
                 onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
                     repetitions: {
@@ -181,7 +142,7 @@ export const WorkoutDayExerciseSet = ({
               style={{ width: "50px" }}
               innerButtons
               size="small"
-              defaultValue={exerciseSet.repetitions.value}
+              value={exerciseSet.repetitions.value}
               onChange={(value) =>
                 updateExerciseSet(exerciseSet.uid, {
                   repetitions: {
@@ -195,30 +156,32 @@ export const WorkoutDayExerciseSet = ({
         </div>
       </div>
       <div>
-        <Tag color="blue" size="large">
-          <b>Weight</b>
-        </Tag>
-        <Select
-          placeholder="Weight type"
-          optionList={repetitionSelectItems}
-          size="small"
-          style={{ marginLeft: "5px" }}
-          onChange={(value) =>
-            updateExerciseSet(exerciseSet.uid, {
-              weight: {
-                ...exerciseSet.weight,
-                type: value as WeightType,
-              },
-            })
-          }
-        />
+        <Space spacing={"tight"}>
+          <Tag color="blue" size="large">
+            <b>Weight</b>
+          </Tag>
+          <Select
+            placeholder="Weight type"
+            optionList={weightSelectItems}
+            size="small"
+            style={{ marginLeft: "5px" }}
+            onChange={(value) =>
+              updateExerciseSet(exerciseSet.uid, {
+                weight: {
+                  ...exerciseSet.weight,
+                  type: value as WeightType,
+                },
+              })
+            }
+          />
+        </Space>
         <div style={{ marginTop: "5px" }}>
           {exerciseSet.weight.type === WeightType.Fixed && (
             <InputNumber
               style={{ width: "50px" }}
               innerButtons
               size="small"
-              defaultValue={exerciseSet.weight.value}
+              value={exerciseSet.weight.value}
               onChange={(value) =>
                 updateExerciseSet(exerciseSet.uid, {
                   weight: {
@@ -236,7 +199,7 @@ export const WorkoutDayExerciseSet = ({
                 style={{ width: "50px" }}
                 innerButtons
                 size="small"
-                defaultValue={exerciseSet.weight.valueFrom}
+                value={exerciseSet.weight.valueFrom}
                 onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
                     weight: {
@@ -251,7 +214,7 @@ export const WorkoutDayExerciseSet = ({
                 style={{ width: "50px" }}
                 innerButtons
                 size="small"
-                defaultValue={exerciseSet.weight.valueTo}
+                value={exerciseSet.weight.valueTo}
                 onChange={(value) =>
                   updateExerciseSet(exerciseSet.uid, {
                     weight: {
@@ -269,7 +232,7 @@ export const WorkoutDayExerciseSet = ({
               style={{ width: "50px" }}
               innerButtons
               size="small"
-              defaultValue={exerciseSet.weight.value}
+              value={exerciseSet.weight.value}
               onChange={(value) =>
                 updateExerciseSet(exerciseSet.uid, {
                   weight: {
