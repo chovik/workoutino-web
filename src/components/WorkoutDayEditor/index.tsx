@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { WEEK_DAYS } from "../WeekDayCheckboxList";
 import React from "react";
-import { Guid, WorkoutDayExercise } from "./exercise";
+import { Guid, IWorkoutExerciseSet, WorkoutDayExercise } from "./exercise";
 import { Button } from "@douyinfe/semi-ui";
 import { IconClose, IconPlus, IconSearch } from "@douyinfe/semi-icons";
+import { useExercisesState } from "../../pages/workoutEditor/state";
 
 export interface IWorkoutExercise {
   uid: string;
@@ -16,9 +17,9 @@ export interface IWorkoutSingleExercise {
   exercise: IExercise;
 }
 
-export interface IWorkoutExerciseSet {
-  units: IWorkoutExerciseSetUnit[];
-}
+// export interface IWorkoutExerciseSet {
+//   units: IWorkoutExerciseSetUnit[];
+// }
 
 export interface IWorkoutExerciseSetUnit {
   exercise: IExercise;
@@ -39,7 +40,9 @@ export interface IWeekkDayCheckBoxListProps {
 }
 
 export const WorkoutDayEditor = () => {
-  const [exercises, setExercises] = useState<IWorkoutExercise[]>([]);
+  const { exercises, addExercise, removeExercise, updateExercise } =
+    useExercisesState();
+
   const suggestions = ["snatch", "clean"].map((country) => {
     return {
       id: country,
@@ -83,35 +86,13 @@ export const WorkoutDayEditor = () => {
     console.log("The tag at index " + index + " was clicked");
   };
 
-  const updateExercise = (
-    uid: string,
-    updatedExercise: Partial<IWorkoutExercise>
-  ) => {
-    const newExercises = exercises.map((e) => {
-      if (e.uid === uid) {
-        console.log(uid);
-        console.log(updatedExercise);
-        return {
-          ...e,
-          ...updatedExercise,
-        };
-      }
-
-      return e;
-    });
-
-    setExercises([...newExercises]);
-  };
-
   return (
     <>
       {exercises.map((exercise, i) => (
         <WorkoutDayExercise
           orderNumber={exercise.name}
           key={exercise.name + i}
-          deleteExercise={(uid) =>
-            setExercises([...exercises.filter((e) => e.uid !== uid)])
-          }
+          deleteExercise={removeExercise}
           updateExercise={updateExercise}
           exercise={exercise}
         />
@@ -120,12 +101,7 @@ export const WorkoutDayEditor = () => {
         icon={<IconPlus />}
         aria-label="Screenshot"
         style={{ position: "absolute", top: "0", right: "0" }}
-        onClick={() => {
-          setExercises([
-            ...exercises,
-            { uid: Guid.newGuid(), name: "", exercises: [], sets: [] },
-          ]);
-        }}
+        onClick={addExercise}
       />
     </>
   );

@@ -16,6 +16,7 @@ import { TagGroupProps, TagProps } from "@douyinfe/semi-ui/lib/es/tag";
 import { IconClose, IconSearch } from "@douyinfe/semi-icons";
 import Select, { ActionMeta, OnChangeValue } from "react-select";
 import { IWorkoutExercise } from ".";
+import { useExercisesState } from "../../pages/workoutEditor/state";
 
 export class Guid {
   static newGuid() {
@@ -80,144 +81,85 @@ export interface IWorkoutExerciseSet {
 }
 
 export interface ISelectOption {
-  value: string;
+  value: number;
   label: string;
 }
 
-export const WorkoutDayExercise = ({
-  orderNumber,
-  exercise,
-  updateExercise,
-  deleteExercise,
-}: IWorkoutDayExerciseProps) => {
-  const options = [
-    { value: "chocolate", label: "Chocolate" },
-    { value: "strawberry", label: "Strawberry" },
-    { value: "vanilla", label: "Vanilla" },
-  ];
-  const [sets, setSets] = useState<IWorkoutExerciseSet[]>([]);
-  const [selectedOption, setSelectedOption] = useState<ISelectOption[]>([
-    options[1],
-  ]);
-  const updateExerciseSet = (
-    uid: string,
-    updatedSet: Partial<IWorkoutExerciseSet>
-  ) => {
-    const newSets = sets.map((set) => {
-      if (set.uid === uid) {
-        console.log(uid);
-        console.log(updatedSet);
-        return {
-          ...set,
-          ...updatedSet,
-        };
-      }
+const exerciseOptions = [
+  { value: 1, label: "Squat Snatch" },
+  { value: 2, label: "Muscle Snatch" },
+  { value: 3, label: "Power Snatch" },
+  { value: 4, label: "Slow Snatch" },
+  { value: 5, label: "Halting Snatch" },
+  { value: 6, label: "Hang Squat Snatch" },
+  { value: 7, label: "Hang Power Snatch" },
+];
 
-      return set;
-    });
-    console.log("newSets", newSets);
+export const WorkoutDayExercise = React.memo(
+  ({ orderNumber, exercise, deleteExercise }: IWorkoutDayExerciseProps) => {
+    const { updateExerciseSet, addExerciseSet, removeExerciseSet } =
+      useExercisesState();
+    const [selectedOption, setSelectedOption] = useState<ISelectOption[]>([
+      exerciseOptions[1],
+    ]);
 
-    setSets([...newSets]);
-  };
+    const handleSelectChange = (
+      newValue: OnChangeValue<ISelectOption, true>,
+      actionMeta: ActionMeta<ISelectOption>
+    ) => {
+      console.log(newValue);
+      setSelectedOption([...selectedOption, ...newValue]);
+    };
 
-  const addNewExerciseSet = () => {
-    const lastExerciseSet = sets.length && sets[sets.length - 1];
-    console.log(lastExerciseSet);
-    const newExerciseSet: IWorkoutExerciseSet = lastExerciseSet
-      ? {
-          ...lastExerciseSet,
-          uid: Guid.newGuid(),
-        }
-      : {
-          id: 0,
-          uid: Guid.newGuid(),
-          repetitions: {
-            type: RepetitionsType.Fixed,
-            value: 7,
-          },
-          weight: {
-            type: WeightType.Fixed,
-            value: 70,
-          },
-        };
-
-    setSets([...sets, newExerciseSet]);
-  };
-
-  const tagList = [
-    { color: "white", children: "Abc", closable: true },
-    { color: "white", children: "Hotsoon" },
-    { color: "white", children: "Toutiao" },
-    { color: "white", children: "Vigo" },
-    { color: "white", children: "Pipixia" },
-  ] as TagProps[];
-
-  const [tags, setTags] = useState<TagProps[]>(tagList);
-
-  const handleSelectChange = (
-    newValue: OnChangeValue<ISelectOption, true>,
-    actionMeta: ActionMeta<ISelectOption>
-  ) => {
-    console.log(newValue);
-    setSelectedOption([...selectedOption, ...newValue]);
-  };
-  console.log(sets);
-
-  return (
-    <Card
-      style={{ marginBottom: 20 }}
-      title={
-        <Space wrap>
-          <b>{orderNumber}</b>
-          <Select
-            options={options}
-            isMulti
-            onChange={handleSelectChange}
-            menuPosition="fixed"
-          />
-        </Space>
-      }
-      headerStyle={{ backgroundColor: "rgba(var(--semi-grey-2), 1)" }}
-      headerExtraContent={
-        <Button
-          icon={<IconClose />}
-          aria-label="Screenshot"
-          onClick={() => {
-            deleteExercise(exercise.uid);
-          }}
-        />
-      }
-    >
-      <CardGroup>
-        {sets.map((set, setNumber) => (
-          <Badge count={setNumber} position="leftTop">
-            <Button
-              icon={<IconClose />}
-              aria-label="Screenshot"
-              style={{ position: "absolute", top: "0", right: "0" }}
-              onClick={() => {
-                console.log(set);
-                console.log([...sets.filter((s) => s.uid !== set.uid)]);
-                setSets([...sets.filter((s) => s.uid !== set.uid)]);
-              }}
+    return (
+      <Card
+        style={{ marginBottom: 20 }}
+        title={
+          <Space wrap>
+            <b>{orderNumber}</b>
+            <Select
+              options={exerciseOptions}
+              isMulti
+              onChange={handleSelectChange}
+              menuPosition="fixed"
             />
-            <Card>
-              <WorkoutDayExerciseSet
-                exerciseSet={set}
-                setNumber={setNumber}
-                key={`set-${setNumber}`}
-                updateExerciseSet={updateExerciseSet}
+          </Space>
+        }
+        headerStyle={{ backgroundColor: "rgba(var(--semi-grey-2), 1)" }}
+        headerExtraContent={
+          <Button
+            icon={<IconClose />}
+            aria-label="Screenshot"
+            onClick={() => {
+              deleteExercise(exercise.uid);
+            }}
+          />
+        }
+      >
+        <CardGroup>
+          {exercise.sets.map((set, setNumber) => (
+            <Badge count={setNumber} position="leftTop">
+              <Button
+                icon={<IconClose />}
+                aria-label="Screenshot"
+                style={{ position: "absolute", top: "0", right: "0" }}
+                onClick={() => removeExerciseSet(exercise.uid, set.uid)}
               />
-            </Card>
-          </Badge>
-        ))}
-        <Button onClick={addNewExerciseSet}>Add set</Button>
-        {/* <Col sm={4} md={3} lg={3} xl={2} xxl={1}>
-          <Button variant="success" onClick={addNewExerciseSet}>
-            Add set
-          </Button>
-        </Col> */}
-      </CardGroup>
-    </Card>
-  );
-};
+              <Card>
+                <WorkoutDayExerciseSet
+                  exerciseSet={set}
+                  setNumber={setNumber}
+                  key={`set-${setNumber}`}
+                  updateExerciseSet={(setUid, updatedSet) =>
+                    updateExerciseSet(exercise.uid, setUid, updatedSet)
+                  }
+                />
+              </Card>
+            </Badge>
+          ))}
+          <Button onClick={() => addExerciseSet(exercise.uid)}>Add set</Button>
+        </CardGroup>
+      </Card>
+    );
+  }
+);
