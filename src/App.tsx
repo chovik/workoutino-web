@@ -1,15 +1,11 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import { WorkoutEditorPage } from "./pages/workoutEditor";
 import { RecoilRoot } from "recoil";
+import { TrainingDayEditor } from "./pages/trainingEditor/TrainingDayEditor";
 
 function App() {
-  return (
-    <RecoilRoot>
-      <WorkoutEditorPage />
-    </RecoilRoot>
-  );
+  return <TrainingDayEditor />;
 }
 
 export default App;
