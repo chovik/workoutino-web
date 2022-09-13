@@ -15,6 +15,7 @@ interface ITrainingDayAddExerciseSetModalProps {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   data: IAddExerciseSetModalData;
   setData: (data: Partial<ITrainingDayExerciseSet>) => void;
+  addSet: (data: IAddExerciseSetModalData) => void;
 }
 
 const weightTypeSelectValues = [
@@ -35,6 +36,7 @@ export const TrainingDayAddExerciseSetModal = ({
   setIsOpen,
   data,
   setData,
+  addSet,
 }: ITrainingDayAddExerciseSetModalProps) => {
   const [weightType, setWeightType] =
     useState<TrainingDayExerciseSetWeightType>(
@@ -83,17 +85,10 @@ export const TrainingDayAddExerciseSetModal = ({
           content="Pridat"
           labelPosition="right"
           icon="checkmark"
-          // onClick={() => {
-          //   setTrainingDayExerciseSets((prev) => [
-          //     ...prev,
-          //     {
-          //       exercises: selectedExercises.map((e) => e.label),
-          //       orderNumber: prev.length + 1,
-          //       sets: [],
-          //     },
-          //   ]);
-          //   setIsOpen(false);
-          // }}
+          onClick={() => {
+            addSet(data);
+            setIsOpen(false);
+          }}
           positive
         />
       </Modal.Actions>
