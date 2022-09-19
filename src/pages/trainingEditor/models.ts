@@ -1,5 +1,5 @@
 export interface ITrainingDayExerciseSet {
-  uid: string;
+  uid?: string;
   id?: number;
   orderNumber: number;
   weight?: number;
@@ -11,11 +11,15 @@ export interface ITrainingDayExerciseSet {
   weightType: TrainingDayExerciseSetWeightType;
 }
 
+export interface ITrainingDay {
+  exercises: ITraningDayExercise[];
+}
+
 export enum TrainingDayExerciseSetWeightType {
   Fixed,
   Range,
   RepsInReserve,
-  RateofPerceivedExertion,
+  RateOfPerceivedExertion,
 }
 
 export enum TrainingDayExerciseSetRepetitionsType {
@@ -39,7 +43,7 @@ export class Guid {
       /[xy]/g,
       function (c) {
         var r = (Math.random() * 16) | 0,
-          v = c == "x" ? r : (r & 0x3) | 0x8;
+          v = c === "x" ? r : (r & 0x3) | 0x8;
         return v.toString(16);
       }
     );

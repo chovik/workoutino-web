@@ -14,27 +14,27 @@ export interface IAddExerciseSetModalData {
   set: ITrainingDayExerciseSet;
 }
 
-const useTrainingDayEditor = () => {
-  const [isAddExerciseModalOpen, setIsAddExerciseModalOpen] = useState(true);
-  const [isAddExerciseSetModalOpen, setIsAddExerciseSetModalOpen] =
-    useState(true);
-  const [trainingDayExercises, setTrainingDayExercises] = useState<
-    ITraningDayExercise[]
-  >([]);
-  const [addExerciseSetModalData, setAddExerciseSetModalData] =
-    useState<IAddExerciseSetModalData | null>(null);
+// const useTrainingDayEditor = () => {
+//   const [isAddExerciseModalOpen, setIsAddExerciseModalOpen] = useState(true);
+//   const [isAddExerciseSetModalOpen, setIsAddExerciseSetModalOpen] =
+//     useState(true);
+//   const [trainingDayExercises, setTrainingDayExercises] = useState<
+//     ITraningDayExercise[]
+//   >([]);
+//   const [addExerciseSetModalData, setAddExerciseSetModalData] =
+//     useState<IAddExerciseSetModalData | null>(null);
 
-  return {
-    isAddExerciseModalOpen,
-    setIsAddExerciseModalOpen,
-    isAddExerciseSetModalOpen,
-    setIsAddExerciseSetModalOpen,
-    trainingDayExercises,
-    setTrainingDayExercises,
-    addExerciseSetModalData,
-    setAddExerciseSetModalData,
-  };
-};
+//   return {
+//     isAddExerciseModalOpen,
+//     setIsAddExerciseModalOpen,
+//     isAddExerciseSetModalOpen,
+//     setIsAddExerciseSetModalOpen,
+//     trainingDayExercises,
+//     setTrainingDayExercises,
+//     addExerciseSetModalData,
+//     setAddExerciseSetModalData,
+//   };
+// };
 
 export const TrainingDayEditor = () => {
   const [isAddExerciseModalOpen, setIsAddExerciseModalOpen] = useState(true);
@@ -46,11 +46,15 @@ export const TrainingDayEditor = () => {
   const [addExerciseSetModalData, setAddExerciseSetModalData] =
     useState<IAddExerciseSetModalData | null>(null);
   const addSet = (data: IAddExerciseSetModalData) => {
-    const newExercises = trainingDayExercises.map((e) =>
-      e.uid === data.exerciseUid
-        ? { ...e, sets: [...e.sets, { ...data.set }] }
-        : e
-    );
+    const newExercises = trainingDayExercises.map((e) => {
+      if (e.uid !== data.exerciseUid) return e;
+      const newSets = data.set.uid
+        ? e.sets.map((s) =>
+            s.uid === data.set.uid ? { ...data.set, uid: Guid.newGuid() } : s
+          )
+        : [...e.sets, { ...data.set }];
+      return { ...e, sets: newSets };
+    });
 
     setTrainingDayExercises(newExercises);
   };
@@ -64,14 +68,14 @@ export const TrainingDayEditor = () => {
             No documents are listed for this customer.
           </Header>
           <Button primary onClick={() => setIsAddExerciseModalOpen(true)}>
-            Add Document
+            Add Exercise
           </Button>
         </Segment>
       )}
 
       {trainingDayExercises.length && (
         <Button primary onClick={() => setIsAddExerciseModalOpen(true)}>
-          Add Document
+          Add Exercise
         </Button>
       )}
 
@@ -83,7 +87,17 @@ export const TrainingDayEditor = () => {
           ))}
 
           {trainingExercise.sets.map((s) => (
-            <div>
+            <div
+              onClick={() => {
+                setIsAddExerciseSetModalOpen(true);
+                setAddExerciseSetModalData({
+                  exerciseUid: trainingExercise.uid,
+                  set: {
+                    ...s,
+                  },
+                });
+              }}
+            >
               {s.orderNumber} {s.weightType}
             </div>
           ))}
@@ -96,13 +110,12 @@ export const TrainingDayEditor = () => {
                 exerciseUid: trainingExercise.uid,
                 set: {
                   orderNumber: trainingExercise.sets.length + 1,
-                  uid: Guid.newGuid(),
                   weightType: TrainingDayExerciseSetWeightType.Fixed,
                 },
               });
             }}
           >
-            Add Document
+            Add Set
           </Button>
         </div>
       ))}

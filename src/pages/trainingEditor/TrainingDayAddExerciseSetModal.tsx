@@ -1,14 +1,10 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import AsyncSelect from "react-select/async";
-import { Button, Form, Input, Label, Modal, Radio } from "semantic-ui-react";
+import { Dispatch, SetStateAction } from "react";
+import { Button, Form, Input, Modal, Radio } from "semantic-ui-react";
 import {
   ITrainingDayExerciseSet,
   TrainingDayExerciseSetWeightType,
 } from "./models";
 import { IAddExerciseSetModalData } from "./TrainingDayEditor";
-
-interface ITrainingDayExerciseSetForm
-  extends Partial<ITrainingDayExerciseSet> {}
 
 interface ITrainingDayAddExerciseSetModalProps {
   isOpen: boolean;
@@ -22,8 +18,8 @@ const weightTypeSelectValues = [
   { value: TrainingDayExerciseSetWeightType.Fixed, label: "Fixed" },
   { value: TrainingDayExerciseSetWeightType.Range, label: "Range" },
   {
-    value: TrainingDayExerciseSetWeightType.RateofPerceivedExertion,
-    label: "RateofPerceivedExertion",
+    value: TrainingDayExerciseSetWeightType.RateOfPerceivedExertion,
+    label: "RateOfPerceivedExertion",
   },
   {
     value: TrainingDayExerciseSetWeightType.RepsInReserve,
@@ -38,10 +34,6 @@ export const TrainingDayAddExerciseSetModal = ({
   setData,
   addSet,
 }: ITrainingDayAddExerciseSetModalProps) => {
-  const [weightType, setWeightType] =
-    useState<TrainingDayExerciseSetWeightType>(
-      TrainingDayExerciseSetWeightType.Fixed
-    );
   return (
     <Modal
       onClose={() => setIsOpen(false)}
@@ -53,7 +45,7 @@ export const TrainingDayAddExerciseSetModal = ({
         <div>
           <Form>
             <Form.Field>
-              Selected value: <b>{weightType}</b>
+              Selected value: <b>{data.set.weightType}</b>
             </Form.Field>
 
             {weightTypeSelectValues.map((weightTypeSelectValue) => (
@@ -62,7 +54,7 @@ export const TrainingDayAddExerciseSetModal = ({
                   label={weightTypeSelectValue.label}
                   name="radioGroup"
                   value={weightTypeSelectValue.value}
-                  checked={weightType === weightTypeSelectValue.value}
+                  checked={data.set.weightType === weightTypeSelectValue.value}
                   onChange={(e, { value }) =>
                     setData({ weightType: weightTypeSelectValue.value })
                   }
@@ -70,11 +62,32 @@ export const TrainingDayAddExerciseSetModal = ({
               </Form.Field>
             ))}
           </Form>
-          <Input
-            placeholder="Search..."
-            value={data.set.weight}
-            onChange={(e) => setData({ weight: Number(e.target.value) })}
-          />
+          {[
+            TrainingDayExerciseSetWeightType.Fixed,
+            TrainingDayExerciseSetWeightType.RateOfPerceivedExertion,
+            TrainingDayExerciseSetWeightType.RepsInReserve,
+          ].includes(data.set.weightType) && (
+            <Input
+              value={data.set.weight}
+              onChange={(e) => setData({ weight: Number(e.target.value) })}
+            />
+          )}
+
+          {data.set.weightType === TrainingDayExerciseSetWeightType.Range && (
+            <>
+              <Input
+                value={data.set.weightFrom}
+                onChange={(e) =>
+                  setData({ weightFrom: Number(e.target.value) })
+                }
+              />
+              -
+              <Input
+                value={data.set.weightTo}
+                onChange={(e) => setData({ weightTo: Number(e.target.value) })}
+              />
+            </>
+          )}
         </div>
       </Modal.Content>
       <Modal.Actions>
