@@ -1,13 +1,29 @@
 import { useState } from "react";
 import { Segment, Header, Icon, Button } from "semantic-ui-react";
 import {
+  BasicTrainingDayUnit,
+  IBasicTrainingDayUnit,
+} from "./BasicTrainingDayUnit";
+import {
+  EmomTrainingDayUnit,
+  IEmomTrainingDayUnit,
+} from "./EmomTrainingDayUnit";
+import {
   Guid,
   ITrainingDayExerciseSet,
   ITraningDayExercise,
   TrainingDayExerciseSetWeightType,
 } from "./models";
+import {
+  ISuperSetTrainingDayUnit,
+  SuperSetTrainingDayUnit,
+} from "./SuperSetTrainingDayUnit";
 import { TrainingDayAddExerciseModal } from "./TrainingDayAddExerciseModal";
 import { TrainingDayAddExerciseSetModal } from "./TrainingDayAddExerciseSetModal";
+import {
+  IUniqueSetsTrainingDayUnit,
+  UniqueSetsTrainingDayUnit,
+} from "./UniqueSetsTrainingDayUnit";
 
 export interface IAddExerciseSetModalData {
   exerciseUid: string;
@@ -36,6 +52,12 @@ export interface IAddExerciseSetModalData {
 //   };
 // };
 
+export type TrainingDayUnit =
+  | IBasicTrainingDayUnit
+  | IUniqueSetsTrainingDayUnit
+  | IEmomTrainingDayUnit
+  | ISuperSetTrainingDayUnit;
+
 export const TrainingDayEditor = () => {
   const [isAddExerciseModalOpen, setIsAddExerciseModalOpen] = useState(true);
   const [isAddExerciseSetModalOpen, setIsAddExerciseSetModalOpen] =
@@ -43,6 +65,10 @@ export const TrainingDayEditor = () => {
   const [trainingDayExercises, setTrainingDayExercises] = useState<
     ITraningDayExercise[]
   >([]);
+
+  const [trainingDayUnits, setTrainingDayUnits] = useState<TrainingDayUnit[]>(
+    []
+  );
   const [addExerciseSetModalData, setAddExerciseSetModalData] =
     useState<IAddExerciseSetModalData | null>(null);
   const addSet = (data: IAddExerciseSetModalData) => {
@@ -78,6 +104,15 @@ export const TrainingDayEditor = () => {
           Add Exercise
         </Button>
       )}
+
+      {trainingDayUnits.map((trainingDayUnit) => {
+        return (
+          <div>
+            {trainingDayUnit.orderNumber}
+            {getTRainingDayComponent(trainingDayUnit)}
+          </div>
+        );
+      })}
 
       {trainingDayExercises.map((trainingExercise) => (
         <div>
@@ -147,3 +182,15 @@ export const TrainingDayEditor = () => {
     </div>
   );
 };
+function getTRainingDayComponent(trainingDayUnit: TrainingDayUnit) {
+  switch (trainingDayUnit.type) {
+    case "basic":
+      return <BasicTrainingDayUnit {...trainingDayUnit} />;
+    case "emom":
+      return <EmomTrainingDayUnit {...trainingDayUnit} />;
+    case "superSet":
+      return <SuperSetTrainingDayUnit {...trainingDayUnit} />;
+    case "uniqueSets":
+      return <UniqueSetsTrainingDayUnit {...trainingDayUnit} />;
+  }
+}

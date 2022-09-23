@@ -12,9 +12,9 @@ const httpClient = axios.create({
   headers: { "X-Custom-Header": "foobar" },
 });
 
-export const useTrainingDayExercises = (trainingDay: number) =>
-  useQuery(["posts"], async () => {
-    const { data } = await httpClient.get(
+export const useTrainingDayExercises = (trainingDayId: number) =>
+  useQuery(["trainingDay", trainingDayId], async () => {
+    const { data } = await httpClient.get<ITrainingDay>(
       "https://jsonplaceholder.typicode.com/posts"
     );
     return data;
@@ -32,7 +32,7 @@ export const useTrainingDayExercisePostMutation = (trainingDayId: number) => {
     {
       onSuccess: (response, trainingDayExercise) => {
         queryClient.setQueryData<ITrainingDay>(
-          ["trainingDay", trainingDayId, "exercises"],
+          ["trainingDay", trainingDayId],
           (old) => ({
             ...old,
             exercises: [
@@ -54,15 +54,28 @@ export const useTrainingDayExerciseSetPostMutation = (
 
   return useMutation(
     (trainingExerciseSet: ITrainingDayExerciseSet) =>
-      axios.post(
+      axios.post<number>(
         `/trainingDay/${trainingDayId}/exercises/${trainingExerciseId}`,
         trainingExerciseSet
       ),
     {
-      onSuccess: () => {
-        queryClient.setQueryData(
+      onSuccess: (response, trainingDayExerciseSet) => {
+        queryClient.setQueryData<ITrainingDay>(
           ["trainingDay", trainingDayId, "exercises"],
-          {}
+          (old) => ({
+            ...old!,
+            exercises: old!.exercises.map((e) =>
+              e.id === trainingExerciseId
+                ? {
+                    ...e,
+                    sets: [
+                      ...e.sets,
+                      { ...trainingDayExerciseSet, id: response.data },
+                    ],
+                  }
+                : e
+            ),
+          })
         );
       },
     }
