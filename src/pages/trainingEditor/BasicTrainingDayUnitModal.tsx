@@ -1,64 +1,60 @@
-import {
-  Form,
-  Input,
-  Select,
-  Radio,
-  TextArea,
-  Checkbox,
-  Button,
-} from "semantic-ui-react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Form, InputOnChangeData, Modal } from "semantic-ui-react";
+import { IBasicTrainingDayUnit } from "./BasicTrainingDayUnit";
+import { ExercisesSelect } from "./ExercisesSelect";
+import { TrainingDayUnit } from "./TrainingDayEditor";
 
-export const BasicTrainingDayUnitModal = () => {
+// export interface IBasicTrainingDayUnit {
+//   orderNumber: number;
+//   exerciseIds: number[];
+//   type: "basic";
+//   weight: number;
+//   repetitions: number;
+//   note: string;
+// }
+
+export interface IBasicTrainingDayUnitModalFormProps {
+  editDayUnit: IBasicTrainingDayUnit;
+  handleInputChange: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    data: InputOnChangeData
+  ) => void;
+  setSelectedExerciseIds: (exerciseIds: number[]) => void;
+}
+
+export const BasicTrainingDayUnitModalForm = ({
+  editDayUnit,
+  handleInputChange,
+  setSelectedExerciseIds,
+}: IBasicTrainingDayUnitModalFormProps) => {
   return (
-    <Form>
+    <>
       <Form.Group widths="equal">
-        <Form.Field
-          control={Input}
-          label="First name"
-          placeholder="First name"
+        <ExercisesSelect
+          selectedExerciseIds={editDayUnit.exerciseIds}
+          setSelectedExerciseIds={setSelectedExerciseIds}
         />
-        <Form.Field control={Input} label="Last name" placeholder="Last name" />
-        <Form.Field
-          control={Select}
-          label="Gender"
-          options={options}
-          placeholder="Gender"
+        <Form.Input
+          name="repetitions"
+          label="Repetitions"
+          value={editDayUnit.repetitions}
+          onChange={handleInputChange}
         />
-      </Form.Group>
-      <Form.Group inline>
-        <label>Quantity</label>
-        <Form.Field
-          control={Radio}
-          label="One"
-          value="1"
-          checked={value === "1"}
-          onChange={this.handleChange}
+
+        <Form.Input
+          name="weight"
+          label="Weight"
+          value={editDayUnit.weight}
+          onChange={handleInputChange}
         />
-        <Form.Field
-          control={Radio}
-          label="Two"
-          value="2"
-          checked={value === "2"}
-          onChange={this.handleChange}
-        />
-        <Form.Field
-          control={Radio}
-          label="Three"
-          value="3"
-          checked={value === "3"}
-          onChange={this.handleChange}
+
+        <Form.Input
+          name="note"
+          label="Note"
+          value={editDayUnit.note}
+          onChange={handleInputChange}
         />
       </Form.Group>
-      <Form.Field
-        control={TextArea}
-        label="About"
-        placeholder="Tell us more about you..."
-      />
-      <Form.Field
-        control={Checkbox}
-        label="I agree to the Terms and Conditions"
-      />
-      <Form.Field control={Button}>Submit</Form.Field>
-    </Form>
+    </>
   );
 };

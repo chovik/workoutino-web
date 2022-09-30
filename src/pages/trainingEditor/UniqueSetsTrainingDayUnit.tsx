@@ -1,4 +1,6 @@
 export interface IUniqueSetsTrainingDayUnit {
+  id: number;
+  uid: string | null;
   orderNumber: number;
   type: "uniqueSets";
   exerciseIds: number[];

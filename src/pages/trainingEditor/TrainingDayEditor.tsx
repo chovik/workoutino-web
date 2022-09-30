@@ -8,18 +8,12 @@ import {
   EmomTrainingDayUnit,
   IEmomTrainingDayUnit,
 } from "./EmomTrainingDayUnit";
-import {
-  Guid,
-  ITrainingDayExerciseSet,
-  ITraningDayExercise,
-  TrainingDayExerciseSetWeightType,
-} from "./models";
+import { Guid, ITrainingDayExerciseSet } from "./models";
 import {
   ISuperSetTrainingDayUnit,
   SuperSetTrainingDayUnit,
 } from "./SuperSetTrainingDayUnit";
-import { TrainingDayAddExerciseModal } from "./TrainingDayAddExerciseModal";
-import { TrainingDayAddExerciseSetModal } from "./TrainingDayAddExerciseSetModal";
+import { TrainingDayUnitModal } from "./TrainingDayUnitModal";
 import {
   IUniqueSetsTrainingDayUnit,
   UniqueSetsTrainingDayUnit,
@@ -30,159 +24,122 @@ export interface IAddExerciseSetModalData {
   set: ITrainingDayExerciseSet;
 }
 
-// const useTrainingDayEditor = () => {
-//   const [isAddExerciseModalOpen, setIsAddExerciseModalOpen] = useState(true);
-//   const [isAddExerciseSetModalOpen, setIsAddExerciseSetModalOpen] =
-//     useState(true);
-//   const [trainingDayExercises, setTrainingDayExercises] = useState<
-//     ITraningDayExercise[]
-//   >([]);
-//   const [addExerciseSetModalData, setAddExerciseSetModalData] =
-//     useState<IAddExerciseSetModalData | null>(null);
-
-//   return {
-//     isAddExerciseModalOpen,
-//     setIsAddExerciseModalOpen,
-//     isAddExerciseSetModalOpen,
-//     setIsAddExerciseSetModalOpen,
-//     trainingDayExercises,
-//     setTrainingDayExercises,
-//     addExerciseSetModalData,
-//     setAddExerciseSetModalData,
-//   };
-// };
-
 export type TrainingDayUnit =
   | IBasicTrainingDayUnit
   | IUniqueSetsTrainingDayUnit
   | IEmomTrainingDayUnit
   | ISuperSetTrainingDayUnit;
 
-export const TrainingDayEditor = () => {
-  const [isAddExerciseModalOpen, setIsAddExerciseModalOpen] = useState(true);
-  const [isAddExerciseSetModalOpen, setIsAddExerciseSetModalOpen] =
-    useState(true);
-  const [trainingDayExercises, setTrainingDayExercises] = useState<
-    ITraningDayExercise[]
-  >([]);
+const getNewTrainingDayUnit = (orderNumber: number) =>
+  ({
+    id: 0,
+    uid: null,
+    type: "basic",
+    orderNumber: orderNumber,
+    exerciseIds: [],
+    note: "",
+    repetitions: 0,
+    weight: 0,
+    setsCount: 1,
+  } as TrainingDayUnit);
 
+export const TrainingDayEditor = () => {
+  const [isAddTrainingDayUnitOpen, setIsAddTrainingDayUnitOpen] =
+    useState(true);
   const [trainingDayUnits, setTrainingDayUnits] = useState<TrainingDayUnit[]>(
     []
   );
-  const [addExerciseSetModalData, setAddExerciseSetModalData] =
-    useState<IAddExerciseSetModalData | null>(null);
-  const addSet = (data: IAddExerciseSetModalData) => {
-    const newExercises = trainingDayExercises.map((e) => {
-      if (e.uid !== data.exerciseUid) return e;
-      const newSets = data.set.uid
-        ? e.sets.map((s) =>
-            s.uid === data.set.uid ? { ...data.set, uid: Guid.newGuid() } : s
-          )
-        : [...e.sets, { ...data.set }];
-      return { ...e, sets: newSets };
-    });
+  const [currentTrainingDayUnit, setCurrentTrainingDayUnit] =
+    useState<TrainingDayUnit>(
+      getNewTrainingDayUnit(trainingDayUnits.length + 1)
+    );
 
-    setTrainingDayExercises(newExercises);
+  const addTrainingDayUnit = (dayUnit: TrainingDayUnit) => {
+    setTrainingDayUnits((prevState) => [
+      ...prevState,
+      { ...dayUnit, uid: Guid.newGuid() },
+    ]);
   };
+  const editTrainingDayUnit = (dayUnit: TrainingDayUnit) =>
+    setTrainingDayUnits((prevState) =>
+      prevState.map((unit) =>
+        unit.uid === dayUnit.uid ? { ...unit, ...dayUnit } : unit
+      )
+    );
 
   return (
     <div>
-      {!trainingDayExercises.length && (
+      {!trainingDayUnits.length && (
         <Segment placeholder>
           <Header icon>
             <Icon name="thumbs down outline" />
             No documents are listed for this customer.
           </Header>
-          <Button primary onClick={() => setIsAddExerciseModalOpen(true)}>
+          <Button
+            primary
+            onClick={() => {
+              setCurrentTrainingDayUnit(
+                getNewTrainingDayUnit(trainingDayUnits.length + 1)
+              );
+              setIsAddTrainingDayUnitOpen(true);
+            }}
+          >
             Add Exercise
           </Button>
         </Segment>
       )}
 
-      {trainingDayExercises.length && (
-        <Button primary onClick={() => setIsAddExerciseModalOpen(true)}>
+      {trainingDayUnits.length && (
+        <Button
+          primary
+          onClick={() => {
+            setCurrentTrainingDayUnit({
+              id: 0,
+              uid: null,
+              type: "basic",
+              orderNumber: trainingDayUnits.length + 1,
+              exerciseIds: [],
+              note: "",
+              repetitions: 0,
+              weight: 0,
+              setsCount: 1,
+            });
+            setIsAddTrainingDayUnitOpen(true);
+          }}
+        >
           Add Exercise
         </Button>
       )}
 
-      {trainingDayUnits.map((trainingDayUnit) => {
+      {trainingDayUnits.map((trainingDayUnit, trainingDayUnitIndex) => {
         return (
-          <div>
+          <div
+            key={trainingDayUnitIndex}
+            onDoubleClick={(e) => {
+              setCurrentTrainingDayUnit(trainingDayUnit);
+              setIsAddTrainingDayUnitOpen(true);
+            }}
+          >
             {trainingDayUnit.orderNumber}
             {getTRainingDayComponent(trainingDayUnit)}
           </div>
         );
       })}
 
-      {trainingDayExercises.map((trainingExercise) => (
-        <div>
-          <div>{trainingExercise.orderNumber}</div>
-          {trainingExercise.exercises.map((e) => (
-            <div>{e}</div>
-          ))}
-
-          {trainingExercise.sets.map((s) => (
-            <div
-              onClick={() => {
-                setIsAddExerciseSetModalOpen(true);
-                setAddExerciseSetModalData({
-                  exerciseUid: trainingExercise.uid,
-                  set: {
-                    ...s,
-                  },
-                });
-              }}
-            >
-              {s.orderNumber} {s.weightType}
-            </div>
-          ))}
-
-          <Button
-            primary
-            onClick={() => {
-              setIsAddExerciseSetModalOpen(true);
-              setAddExerciseSetModalData({
-                exerciseUid: trainingExercise.uid,
-                set: {
-                  orderNumber: trainingExercise.sets.length + 1,
-                  weightType: TrainingDayExerciseSetWeightType.Fixed,
-                },
-              });
-            }}
-          >
-            Add Set
-          </Button>
-        </div>
-      ))}
-
-      <TrainingDayAddExerciseModal
-        isOpen={isAddExerciseModalOpen}
-        setIsOpen={setIsAddExerciseModalOpen}
-        setTrainingDayExercises={setTrainingDayExercises}
+      <TrainingDayUnitModal
+        isOpen={isAddTrainingDayUnitOpen}
+        setIsOpen={setIsAddTrainingDayUnitOpen}
+        submitAction={
+          currentTrainingDayUnit.uid ? editTrainingDayUnit : addTrainingDayUnit
+        }
+        setEditDayUnit={setCurrentTrainingDayUnit}
+        editDayUnit={currentTrainingDayUnit as IBasicTrainingDayUnit}
       />
-
-      {addExerciseSetModalData && (
-        <TrainingDayAddExerciseSetModal
-          isOpen={isAddExerciseSetModalOpen}
-          setIsOpen={setIsAddExerciseSetModalOpen}
-          data={addExerciseSetModalData}
-          addSet={addSet}
-          setData={(setData) =>
-            setAddExerciseSetModalData((prev) =>
-              prev
-                ? {
-                    ...prev,
-                    set: { ...prev?.set, ...setData },
-                  }
-                : null
-            )
-          }
-        />
-      )}
     </div>
   );
 };
-function getTRainingDayComponent(trainingDayUnit: TrainingDayUnit) {
+
+const getTRainingDayComponent = (trainingDayUnit: TrainingDayUnit) => {
   switch (trainingDayUnit.type) {
     case "basic":
       return <BasicTrainingDayUnit {...trainingDayUnit} />;
@@ -193,4 +150,4 @@ function getTRainingDayComponent(trainingDayUnit: TrainingDayUnit) {
     case "uniqueSets":
       return <UniqueSetsTrainingDayUnit {...trainingDayUnit} />;
   }
-}
+};

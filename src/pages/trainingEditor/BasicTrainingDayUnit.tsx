@@ -1,9 +1,11 @@
 export interface IBasicTrainingDayUnit {
+  id: number;
+  uid: string | null;
   orderNumber: number;
   type: "basic";
   exerciseIds: number[];
   weight: number;
-  repetitons: number;
+  repetitions: number;
   note: string;
   setsCount: number;
 }
@@ -11,7 +13,7 @@ export interface IBasicTrainingDayUnit {
 export const BasicTrainingDayUnit = ({
   exerciseIds,
   note,
-  repetitons,
+  repetitions,
   setsCount,
   type,
   weight,
@@ -24,7 +26,7 @@ export const BasicTrainingDayUnit = ({
         ))}
       </div>
       <div>
-        {repetitons}x{weight}kg in {setsCount} sets
+        {repetitions}x{weight}kg in {setsCount} sets
         <i>{note}</i>
       </div>
     </>

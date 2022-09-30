@@ -1,4 +1,6 @@
 export interface ISuperSetTrainingDayUnit {
+  id: number;
+  uid: string | null;
   orderNumber: number;
   type: "superSet";
   setUnits: ISuperSetUnit[];

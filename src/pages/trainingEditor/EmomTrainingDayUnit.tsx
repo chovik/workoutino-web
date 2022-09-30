@@ -1,4 +1,6 @@
 export interface IEmomTrainingDayUnit {
+  id: number;
+  uid: string | null;
   orderNumber: number;
   exerciseIds: number[];
   type: "emom";
