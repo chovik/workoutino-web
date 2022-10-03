@@ -37,6 +37,16 @@ export interface ITraningDayExercise {
   sets: ITrainingDayExerciseSet[];
 }
 
+export enum WeekDays {
+  SUNDAY,
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY,
+  SATURDAYS,
+}
+
 export class Guid {
   static newGuid() {
     return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(

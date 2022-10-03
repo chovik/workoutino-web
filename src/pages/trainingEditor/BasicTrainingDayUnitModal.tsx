@@ -1,17 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
-import { Form, InputOnChangeData, Modal } from "semantic-ui-react";
+import { Form, InputOnChangeData } from "semantic-ui-react";
 import { IBasicTrainingDayUnit } from "./BasicTrainingDayUnit";
 import { ExercisesSelect } from "./ExercisesSelect";
-import { TrainingDayUnit } from "./TrainingDayEditor";
-
-// export interface IBasicTrainingDayUnit {
-//   orderNumber: number;
-//   exerciseIds: number[];
-//   type: "basic";
-//   weight: number;
-//   repetitions: number;
-//   note: string;
-// }
 
 export interface IBasicTrainingDayUnitModalFormProps {
   editDayUnit: IBasicTrainingDayUnit;
@@ -52,6 +41,12 @@ export const BasicTrainingDayUnitModalForm = ({
           name="note"
           label="Note"
           value={editDayUnit.note}
+          onChange={handleInputChange}
+        />
+        <Form.Input
+          name="setsCount"
+          label="Sets"
+          value={editDayUnit.setsCount}
           onChange={handleInputChange}
         />
       </Form.Group>

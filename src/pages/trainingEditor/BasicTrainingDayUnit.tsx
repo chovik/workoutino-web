@@ -26,7 +26,8 @@ export const BasicTrainingDayUnit = ({
         ))}
       </div>
       <div>
-        {repetitions}x{weight}kg in {setsCount} sets
+        {repetitions} x {weight} kg in {setsCount} sets
+        <br />
         <i>{note}</i>
       </div>
     </>

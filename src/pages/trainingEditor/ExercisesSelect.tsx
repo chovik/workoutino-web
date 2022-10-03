@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
 
 const optionsS: IOptionValue[] = [
@@ -59,6 +59,7 @@ export const ExercisesSelect = ({
       multiple
       value={selectedExerciseIds}
       onAddItem={handleAddition}
+      allowAdditions={true}
       onChange={handleChange}
     />
   );
